@@ -1,15 +1,15 @@
 
 # Simpler serial communication between a Windows C++ application and an Arduino
 
-This tiny library is based on [simple_serial_port](https://github.com/dmicha16/simple_serial_port), but more flexible, faster and perhaps also simpler to use.  
+This tiny library is based on [simple_serial_port](https://github.com/dmicha16/simple_serial_port), but more flexible, faster and perhaps even simpler to use.  
 It was written for use with high speed ADCs.  
 
 ## Features
 
-- Universal: Send/receive packages (arrays) of any C++ type over a serial port with a custom delimiter between packages.  
-- Fast: Packages are sent and read at once, significantly increasing transfer speeds compared to [simple_serial_port](https://github.com/dmicha16/simple_serial_port), where single byte operations are used.
-- Simple to use: See "How to" below.
-- Robust: The delimiter ensures that the stream of data returns to alignment in the case of interruptions.
+- **Universal**: Send/receive packages (arrays) of any C++ type over a serial port with a custom delimiter between packages.  
+- **Fast**: Packages are sent and read at once, significantly increasing transfer speeds compared to [simple_serial_port](https://github.com/dmicha16/simple_serial_port), where single byte operations are used.
+- **Simple to use**: See "How to" below.
+- **Robust**: The delimiter ensures that the stream of data returns to alignment in the case of interruptions.
 
 ## How to use it
 
@@ -17,19 +17,24 @@ Include the `*_arduino.hpp` into your arduino project and the `*_windows.hpp` in
 
 ### On windows
 
-Initialization:  
+**Initialization:**  
 ```cpp
 using namespace Simpler_Serial;
 Serial_Handle_Windows serial(3, 115200); // Your custom com port and baud rate.
-// Set the com port to 0, to coinnect to the next open com port.
+
+// Set the com port to 0, to connect to the next open com port.
 // Set 'wait_for_connection' to true (3, 115200, true), to wait on a specific com port.
 ```
 
-Sending packages:  
+**Sending packages:**  
 ```cpp
 struct My_Data { int a, b, c; float d; };
 
-// underlying package type = My_data, package size = 5, delimiter type = float, delimiter value = INFINITY
+// underlying package type = My_data
+// package size = 5
+// delimiter type = float
+// delimiter value = INFINITY
+
 Serial_Package<Delimited_Package<My_Data, 5, float, INFINTY>> serial_package_with_delimiter;
 Serial_Package<Package<My_Data, 5>> serial_package_without_delimiter;
 
@@ -41,35 +46,43 @@ serial_package_with_delimiter[0] = {1, -2, 3, 4.5};
 serial_package_with_delimiter.send_package(serial);
 ```
 
-Receiving packages:  
+**Receiving packages:**  
 ```cpp
 My_Data data[5];
-// underlying package type = My_Data, package size = 5, delimiter type = float, delimiter value = INFINITY, buffer = data
+
+// underlying package type = My_Data
+// package size = 5
+// delimiter type = float
+// delimiter value = INFINITY
+// buffer = data
+
 serial.read_serial_package<My_Data, 5, float, INFINITY>(data)>
+
 // or this, if the package has no delimiter
 serial.read_serial_package<My_Data, 5>(data)>
 ```
 
-Closing the serial port:  
+**Closing the serial port:**  
 ```cpp
 seral.close_serial_port();
 ```
 
 ### On Arduino
 
-Initialization:  
+**Initialization:**  
 ```cpp
 using namespace Simpler_Serial;
-Serial.begin(115200); // Make sure this matches the baud rate on the windows side (it can be any positive integer, as long they match)
+// Make sure this matches the baud rate on the windows side (it can be any positive integer, as long they match)
+Serial.begin(115200);
 ```
 
-Sending packages:  
+**Sending packages:**  
 ```cpp
 // The only difference is that no serial handle has to be passed (Arduino already has 'Serial')
 serial_package_with_delimiter.send_package();
 ```
 
-Receiving packages:  
+**Receiving packages:**  
 ```cpp
 // Again, the only difference is the missing explicit serial handle.
 read_serial_package<My_Data, 5, float, INFINITY>(data)
@@ -97,7 +110,7 @@ Printing a `sizeof(My_Struct)` should uncover most discrepancies.
 - The Arduino Uno has a queue size of just 64 bytes. So any package (including the delimiter) has to fit in there, since they are read at once.
 - If your Windows application struggles too keep up to the arduino (unlikely scenario), you can set the argument `bytes_skip_limit` of `read_serial_package`
 to a value greater than 0 to skip bytes whenever the queue grows larger than this limit. This can also be used to synchronize faster with the incomming data stream,
-when there is a lang spike (more likely scenario). On the arduino side this feature was emited, due to the small queue size.
+when there is a lag spike (more likely scenario). On the arduino side this feature was emited, due to the small queue size.
 
 #### On arduino warning messages
 
