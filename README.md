@@ -114,5 +114,5 @@ when there is a lag spike (more likely scenario). On the arduino side this featu
 
 #### On arduino warning messages
 
-- Since logging through `Serial.print()` would interfere with the serial packages,
+Since logging through `Serial.print()` would interfere with the serial packages,
 no warnings are printed, when bytes are skipped for example.

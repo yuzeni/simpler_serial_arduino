@@ -26,7 +26,7 @@ namespace Simpler_Serial {
     template<typename T>
     union Byte_View
     {
-        T val = T{};
+        T val{};
         uint8_t bytes[sizeof(T)];
     };
 
@@ -67,6 +67,7 @@ namespace Simpler_Serial {
     
         HANDLE m_io_handler;
         COMSTAT m_status;
+
         DWORD m_errors;
         bool m_connected = false;
     };

@@ -7,7 +7,7 @@ namespace Simpler_Serial {
     template<typename T>
     union Byte_View
     {
-        T val;
+        T val{};
         byte bytes[sizeof(T)];
     };
 
