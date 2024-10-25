@@ -9,7 +9,7 @@ int main()
     namespace chr = std::chrono;
     
     // 0 => search for an open com port, you can also specify the specific com port such as 3
-    Serial_Handle_Windows serial(0, BAUD_RATE, true); // change this to the correct com port
+    Serial_Handle_Windows serial(0, BAUD_RATE);
     
     VALUE_TYPE data[PKG_SZ];
     
